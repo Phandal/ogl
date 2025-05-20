@@ -1,11 +1,15 @@
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stdio.h>
 
 int main(void) {
   GLFWwindow *window;
 
-  /* Initialize the library */
-  if (!glfwInit())
+  /* Initialize the glfw library */
+  if (!glfwInit()) {
+    fprintf(stderr, "Failed to initialize GLFW\n");
     return -1;
+  }
 
   /* Create a windowed mode window and its OpenGL context */
   window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -17,11 +21,19 @@ int main(void) {
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
 
+  /* Initialize the glad library */
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+      fprintf(stderr, "Failed to initialize GLAD\n");
+      return -1;
+    }
+
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
     glClear(GL_COLOR_BUFFER_BIT);
 
+    
     /* Swap front and back buffers */
     glfwSwapBuffers(window);
 
