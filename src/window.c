@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
@@ -11,8 +11,16 @@ int main(void) {
     return -1;
   }
 
+  int count;
+  GLFWmonitor **monitors = glfwGetMonitors(&count);
+  if (!monitors) {
+    fprintf(stderr, "Failed to get attached monitors.\n");
+    glfwTerminate();
+    return -1;
+  }
+
   /* Create a windowed mode window and its OpenGL context */
-  window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+  window = glfwCreateWindow(640, 480, "Hello World", monitors[0], NULL);
   if (!window) {
     glfwTerminate();
     return -1;
@@ -22,18 +30,16 @@ int main(void) {
   glfwMakeContextCurrent(window);
 
   /* Initialize the glad library */
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-      fprintf(stderr, "Failed to initialize GLAD\n");
-      return -1;
-    }
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    fprintf(stderr, "Failed to initialize GLAD\n");
+    return -1;
+  }
 
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
     glClear(GL_COLOR_BUFFER_BIT);
 
-    
     /* Swap front and back buffers */
     glfwSwapBuffers(window);
 
