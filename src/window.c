@@ -1,52 +1,22 @@
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "log.h"
 
 int main(void) {
-  GLFWwindow *window;
+  // Initialize GLFW
+  glfwInit();
+  
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // Set the major version
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); // Set the minor version
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Use Core Profile, which gives smaller version of opengl functionality
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Remove all features that are marked as depracated in the current version (Neede for Mac?)
 
-  /* Initialize the glfw library */
-  if (!glfwInit()) {
-    fprintf(stderr, "Failed to initialize GLFW\n");
-    return -1;
+  GLFWwindow *window = glfwCreateWindow(600, 800, "Hello Triangle", NULL, NULL);
+  if (window == NULL) {
+    log_error("could not create GLFW window.");
+    exit(-1);
   }
-
-  int count;
-  GLFWmonitor **monitors = glfwGetMonitors(&count);
-  if (!monitors) {
-    fprintf(stderr, "Failed to get attached monitors.\n");
-    glfwTerminate();
-    return -1;
-  }
-
-  /* Create a windowed mode window and its OpenGL context */
-  window = glfwCreateWindow(640, 480, "Hello World", monitors[0], NULL);
-  if (!window) {
-    glfwTerminate();
-    return -1;
-  }
-
-  /* Make the window's context current */
-  glfwMakeContextCurrent(window);
-
-  /* Initialize the glad library */
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    fprintf(stderr, "Failed to initialize GLAD\n");
-    return -1;
-  }
-
-  /* Loop until the user closes the window */
-  while (!glfwWindowShouldClose(window)) {
-    /* Render here */
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    /* Swap front and back buffers */
-    glfwSwapBuffers(window);
-
-    /* Poll for and process events */
-    glfwPollEvents();
-  }
-
-  glfwTerminate();
-  return 0;
 }
