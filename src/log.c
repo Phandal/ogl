@@ -62,12 +62,9 @@ void log_info(const char *fmt, ...) {
   va_end(args);
 }
 
-
 void log_debug(const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   log_message(LOG_DEBUG, fmt, args);
   va_end(args);
-  
 }
-
