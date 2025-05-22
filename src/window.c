@@ -10,21 +10,19 @@
 #define MESSAGE_SIZE 512
 
 const char *vertexShaderSource =
-  "#version 460 core\n"
-  "layout (location = 0) in vec3 aPos;\n"
-  "\n"
-  "void main() {\n"
-  "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-  "}\n";
+    "#version 460 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "\n"
+    "void main() {\n"
+    "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\n";
 
-const char *fragmentShaderSource =
-  "#version 460 core\n"
-  "out vec4 FragColor;\n"
-  "\n"
-  "void main() {\n"
-  " FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
-  "}\n";
-  
+const char *fragmentShaderSource = "#version 460 core\n"
+                                   "out vec4 FragColor;\n"
+                                   "\n"
+                                   "void main() {\n"
+                                   " FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
+                                   "}\n";
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
@@ -95,15 +93,15 @@ int main(void) {
    */
   // Setting up the Vertices to draw a triangle
   float vertices[] = {
-    0.5f, 0.5f, 0.0f, // Top Right
-    0.5f, -0.5f, 0.0f, // Bottom Right
-    -0.5f, -0.5f, 0.0f, // Bottom Left
-    -0.5f, 0.5f, 0.0f, // Top Left
+      0.5f,  0.5f,  0.0f, // Top Right
+      0.5f,  -0.5f, 0.0f, // Bottom Right
+      -0.5f, -0.5f, 0.0f, // Bottom Left
+      -0.5f, 0.5f,  0.0f, // Top Left
   };
 
   unsigned int indices[] = {
-    0, 1, 3,
-    1, 2, 3,
+      0, 1, 3, // First Triangle
+      1, 2, 3, // Second Triangle
   };
 
   /*
@@ -116,7 +114,7 @@ int main(void) {
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
   log_info("bound vertex array object");
-  
+
   /*
     A Vertex Buffer Object is a way to store data on the GPU instead of having
     to send data to the GPU point by point.
@@ -132,17 +130,20 @@ int main(void) {
   GLuint EBO;
   glGenBuffers(1, &EBO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+               GL_STATIC_DRAW);
   log_info("bound element buffer object");
 
   // Explain how to interpret the vertex data in the vertext buffer object
   GLint locationAttribute = 0;
-  glVertexAttribPointer(locationAttribute, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glVertexAttribPointer(locationAttribute, 3, GL_FLOAT, GL_FALSE,
+                        3 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(locationAttribute);
   log_info("enabled location vertex attribute");
 
   /*
-    A Shader is a program that runs on the GPU. It can come in many different formats.
+    A Shader is a program that runs on the GPU. It can come in many different
+    formats.
    */
   // Compiling shaders
   GLuint vertexShader =
@@ -182,7 +183,7 @@ int main(void) {
   glDeleteShader(fragmentShader);
   log_info("shaders deleted");
 
-#ifdef WIREFRAME
+#ifdef WIRE_FRAME
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   log_info("set draw mode to wireframe");
 #endif

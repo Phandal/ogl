@@ -11,4 +11,5 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "GLFW lib only")
 add_subdirectory("extern/glfw")
 add_subdirectory("extern/glad")
 
+option(WIRE_FRAME PUBLIC OFF)
 add_subdirectory("src")
