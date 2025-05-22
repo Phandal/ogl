@@ -95,9 +95,15 @@ int main(void) {
    */
   // Setting up the Vertices to draw a triangle
   float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f, // Top Right
+    0.5f, -0.5f, 0.0f, // Bottom Right
+    -0.5f, -0.5f, 0.0f, // Bottom Left
+    -0.5f, 0.5f, 0.0f, // Top Left
+  };
+
+  unsigned int indices[] = {
+    0, 1, 3,
+    1, 2, 3,
   };
 
   /*
@@ -120,7 +126,14 @@ int main(void) {
   glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  log_info("setup vertex buffer object");
+  log_info("bound vertex buffer object");
+
+  // Setting up element buffer object
+  GLuint EBO;
+  glGenBuffers(1, &EBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  log_info("bound element buffer object");
 
   // Explain how to interpret the vertex data in the vertext buffer object
   GLint locationAttribute = 0;
@@ -169,6 +182,11 @@ int main(void) {
   glDeleteShader(fragmentShader);
   log_info("shaders deleted");
 
+#ifdef WIREFRAME
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  log_info("set draw mode to wireframe");
+#endif
+
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
 
@@ -177,7 +195,7 @@ int main(void) {
 
     glUseProgram(program);
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -188,6 +206,9 @@ int main(void) {
 
   glDeleteBuffers(1, &VBO);
   log_info("vertex buffer object deleted");
+
+  glDeleteBuffers(1, &EBO);
+  log_info("element buffer object deleted");
 
   glDeleteProgram(program);
   log_info("program deleted");
