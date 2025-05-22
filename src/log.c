@@ -14,7 +14,7 @@ enum {
 
 void set_log_file(FILE *file) { LOG_FILE = file; }
 
-void log_message(int level, const char *fmt, ...) {
+void log_message(int level, const char *fmt, va_list args) {
   if (LOG_FILE == NULL) {
     set_log_file(stderr);
   }
@@ -34,10 +34,7 @@ void log_message(int level, const char *fmt, ...) {
     break;
   }
 
-  va_list args;
-  va_start(args, fmt);
   vfprintf(LOG_FILE, fmt, args);
-  va_end(args);
   fprintf(LOG_FILE, "\n");
 }
 
