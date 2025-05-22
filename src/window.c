@@ -7,6 +7,24 @@
 
 #define WIDTH 800
 #define HEIGHT 600
+#define MESSAGE_SIZE 512
+
+const char *vertexShaderSource =
+  "#version 460 core\n"
+  "layout (location = 0) in vec3 aPos;\n"
+  "\n"
+  "void main() {\n"
+  "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+  "}\n";
+
+const char *fragmentShaderSource =
+  "#version 460 core\n"
+  "out vec4 FragColor;\n"
+  "\n"
+  "void main() {\n"
+  " FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
+  "}\n";
+  
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
@@ -16,6 +34,22 @@ void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
+}
+
+GLuint compileShader(GLint type, const char *tag, const char **source) {
+  GLuint shader = glCreateShader(type);
+  glShaderSource(shader, 1, source, NULL);
+  glCompileShader(shader);
+
+  // Check for errors in the vertex shader compilation
+  GLint result;
+  char msg[MESSAGE_SIZE];
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+  if (!result) {
+    glGetShaderInfoLog(shader, MESSAGE_SIZE, NULL, msg);
+    log_error("Failed to compile '%s': %s", tag, msg);
+  }
+  return shader;
 }
 
 int main(void) {
@@ -55,15 +89,108 @@ int main(void) {
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   log_info("set frame buffer size callback");
 
+  /*
+    A Vertex is a collection of data around a 3D point. Vertex data is stored in
+    Vertex Attributes that can contain any data.
+   */
+  // Setting up the Vertices to draw a triangle
+  float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+    0.0f, 0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+  };
+
+  /*
+    A Vertex Array Object stores any vertex attributes that are made while this
+    VAO is bound and which Vertex Buffers are used for those attributes. The VAO
+    can then be bound later to restore the state of the vertex attributes.
+   */
+  // Creating a Vertex Array Object
+  GLuint VAO;
+  glGenVertexArrays(1, &VAO);
+  glBindVertexArray(VAO);
+  log_info("bound vertex array object");
+  
+  /*
+    A Vertex Buffer Object is a way to store data on the GPU instead of having
+    to send data to the GPU point by point.
+   */
+  // Setting up the vertex buffer object
+  GLuint VBO;
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  log_info("setup vertex buffer object");
+
+  // Explain how to interpret the vertex data in the vertext buffer object
+  GLint locationAttribute = 0;
+  glVertexAttribPointer(locationAttribute, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(locationAttribute);
+  log_info("enabled location vertex attribute");
+
+  /*
+    A Shader is a program that runs on the GPU. It can come in many different formats.
+   */
+  // Compiling shaders
+  GLuint vertexShader =
+      compileShader(GL_VERTEX_SHADER, "vertex", &vertexShaderSource);
+  log_info("compiled vertex shader");
+  GLuint fragmentShader =
+      compileShader(GL_FRAGMENT_SHADER, "fragment", &fragmentShaderSource);
+  log_info("compiled fragment shader");
+
+  // Creating program NOTE: attaching shaders links the outputs of the previous
+  // shader to the inputs of the next shdader
+  GLuint program;
+  program = glCreateProgram();
+  log_info("created program");
+  glAttachShader(program, vertexShader);
+  log_info("attached vertex shader");
+  glAttachShader(program, fragmentShader);
+  log_info("attached fragment shader");
+  glLinkProgram(program);
+
+  // Checking for errors when linking
+  GLint result;
+  char msg[MESSAGE_SIZE];
+  glGetProgramiv(program, GL_LINK_STATUS, &result);
+  if (!result) {
+    glGetProgramInfoLog(program, MESSAGE_SIZE, NULL, msg);
+    log_error("Failed to link: %s", msg);
+  }
+  log_info("program linked");
+
+  // Use the program created
+  glUseProgram(program);
+  log_info("using program");
+
+  // Cleanup of the shaders after they were used in the program
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+  log_info("shaders deleted");
+
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glUseProgram(program);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+
+  glDeleteVertexArrays(1, &VAO);
+  log_info("vertex array object deleted");
+
+  glDeleteBuffers(1, &VBO);
+  log_info("vertex buffer object deleted");
+
+  glDeleteProgram(program);
+  log_info("program deleted");
 
   log_info("shutting down");
   glfwDestroyWindow(window);
