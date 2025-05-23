@@ -10,14 +10,14 @@
 #define MESSAGE_SIZE 512
 
 const char *vertexShaderSource =
-    "#version 460 core\n"
+    "#version 410 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "\n"
     "void main() {\n"
     "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
     "}\n";
 
-const char *fragmentShaderSource = "#version 460 core\n"
+const char *fragmentShaderSource = "#version 410 core\n"
                                    "out vec4 FragColor;\n"
                                    "\n"
                                    "void main() {\n"
@@ -26,6 +26,11 @@ const char *fragmentShaderSource = "#version 460 core\n"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
+}
+
+void error_callback(int code, const char *msg) {
+  log_error("GLFW: %d | %s", code, msg);
+  return;
 }
 
 void processInput(GLFWwindow *window) {
@@ -58,7 +63,7 @@ int main(void) {
   log_info("GLFW initialized");
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // Set the major version
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6); // Set the minor version
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1); // Set the minor version
   glfwWindowHint(
       GLFW_OPENGL_PROFILE,
       GLFW_OPENGL_CORE_PROFILE); // Use Core Profile, which gives smaller
@@ -66,6 +71,8 @@ int main(void) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,
                  GL_TRUE); // Remove all features that are marked as depracated
                            // in the current version (Neede for Mac?)
+
+  glfwSetErrorCallback(error_callback);
 
   GLFWwindow *window =
       glfwCreateWindow(WIDTH, HEIGHT, "Hello Window", NULL, NULL);
