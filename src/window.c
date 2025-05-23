@@ -4,25 +4,11 @@
 #include <stdlib.h>
 
 #include "log.h"
+#include "shader.h"
 
 #define WIDTH 800
 #define HEIGHT 600
 #define MESSAGE_SIZE 512
-
-const char *vertexShaderSource =
-    "#version 410 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "\n"
-    "void main() {\n"
-    "  gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\n";
-
-const char *fragmentShaderSource = "#version 410 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "\n"
-                                   "void main() {\n"
-                                   " FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
-                                   "}\n";
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
@@ -37,22 +23,6 @@ void processInput(GLFWwindow *window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
-}
-
-GLuint compileShader(GLint type, const char *tag, const char **source) {
-  GLuint shader = glCreateShader(type);
-  glShaderSource(shader, 1, source, NULL);
-  glCompileShader(shader);
-
-  // Check for errors in the vertex shader compilation
-  GLint result;
-  char msg[MESSAGE_SIZE];
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
-  if (!result) {
-    glGetShaderInfoLog(shader, MESSAGE_SIZE, NULL, msg);
-    log_error("Failed to compile '%s': %s", tag, msg);
-  }
-  return shader;
 }
 
 int main(void) {
@@ -153,11 +123,12 @@ int main(void) {
     formats.
    */
   // Compiling shaders
-  GLuint vertexShader =
-      compileShader(GL_VERTEX_SHADER, "vertex", &vertexShaderSource);
+  shader_t *vertexShader;
+  vertexShader = shader_load(GL_VERTEX_SHADER, "shaders/vertex.glsl");
   log_info("compiled vertex shader");
-  GLuint fragmentShader =
-      compileShader(GL_FRAGMENT_SHADER, "fragment", &fragmentShaderSource);
+
+  shader_t *fragmentShader;
+  fragmentShader = shader_load(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
   log_info("compiled fragment shader");
 
   // Creating program NOTE: attaching shaders links the outputs of the previous
@@ -165,9 +136,9 @@ int main(void) {
   GLuint program;
   program = glCreateProgram();
   log_info("created program");
-  glAttachShader(program, vertexShader);
+  glAttachShader(program, vertexShader->id);
   log_info("attached vertex shader");
-  glAttachShader(program, fragmentShader);
+  glAttachShader(program, fragmentShader->id);
   log_info("attached fragment shader");
   glLinkProgram(program);
 
@@ -186,8 +157,8 @@ int main(void) {
   log_info("using program");
 
   // Cleanup of the shaders after they were used in the program
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
+  shader_destroy(vertexShader);
+  shader_destroy(fragmentShader);
   log_info("shaders deleted");
 
 #ifdef WIRE_FRAME
