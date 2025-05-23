@@ -5,6 +5,8 @@
 
 #include "log.h"
 
+#define LEN(x) sizeof(x) / sizeof(x[0])
+
 #define WIDTH 800
 #define HEIGHT 600
 #define MESSAGE_SIZE 512
@@ -93,15 +95,19 @@ int main(void) {
    */
   // Setting up the Vertices to draw a triangle
   float vertices[] = {
-      0.5f,  0.5f,  0.0f, // Top Right
-      0.5f,  -0.5f, 0.0f, // Bottom Right
-      -0.5f, -0.5f, 0.0f, // Bottom Left
-      -0.5f, 0.5f,  0.0f, // Top Left
+      0.2f,  -0.4f, 0.0f, // Bottom Right
+      -0.2f, -0.4f, 0.0f, // Bottom Left
+      -0.4f, 0.0f,  0.0f, // Mid Left
+      0.0f,  0.4f,  0.0f, // Top
+      0.4f,  0.0f,  0.0f, // Mid Right
+      0.0f,  0.0f,  0.0f, // Middle
   };
 
   unsigned int indices[] = {
-      0, 1, 3, // First Triangle
-      1, 2, 3, // Second Triangle
+      4, 0, 5, // First Triangle
+      5, 0, 1, // Second Triangle
+      1, 5, 2, // Third Triangle
+      2, 3, 4, // Fourth Triangle
   };
 
   /*
@@ -196,7 +202,7 @@ int main(void) {
 
     glUseProgram(program);
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, LEN(indices), GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
