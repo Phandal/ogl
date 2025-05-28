@@ -6,11 +6,5 @@ if (WIRE_FRAME)
   target_compile_definitions(window PUBLIC WIRE_FRAME)
 endif()
 
-file(GLOB SHADERS "${CMAKE_SOURCE_DIR}/src/shaders/*")
-foreach (SHADER ${SHADERS})
-  get_filename_component(SHADER_NAME ${SHADER} NAME)
-  configure_file("${SHADER}" "${CMAKE_BINARY_DIR}/shaders/${SHADER_NAME}" COPYONLY)
-endforeach()
-
 target_link_libraries(window glad)
 target_link_libraries(window glfw)
