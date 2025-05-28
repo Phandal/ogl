@@ -6,7 +6,6 @@
 
 typedef struct {
   GLuint id;
-  GLenum kind;
 } shader_t;
 
 /**
@@ -20,9 +19,9 @@ typedef struct {
  * @param kind The kind of shader to create
  * @param src The source for the shader
  *
- * @return The compiled shader, or `NULL`
+ * @return The compiled shader handle greather than 0, or 0 on error.
  */
-shader_t *shader_create(GLenum kind, const char *src);
+shader_t shader_create(GLenum kind, const char *src);
 
 /**
  * @brief Creates a shader from a source file.
@@ -33,9 +32,23 @@ shader_t *shader_create(GLenum kind, const char *src);
  * @param kind The kind of shader to create
  * @param filepath The path to the source file
  *
- * @return The compiled shader, or `NULL`
+ * @return The compiled shader handle greather than 0, or 0 on error.
  */
-shader_t *shader_load(GLenum kind, const char *filepath);
+shader_t shader_load(GLenum kind, const char *filepath);
+
+/**
+ * @brief Checks the compile status of the shader
+ *
+ * This function checks the status of the compilation of the shader program. The
+ * error message, if any is stored in the msg pointer passed in.
+ *
+ * @param shader The shader to check the status of
+ * @param msg The pointer to store any error message in
+ * @param size The size of the msg
+ * @returns GL_TRUE to indicate successful compilation and GL_FALSE otherwise.
+ */
+GLint shader_get_compile_status(shader_t *shader, char *msg,
+                                unsigned long size);
 
 /**
  * @brief Destroys a shader.
@@ -45,6 +58,6 @@ shader_t *shader_load(GLenum kind, const char *filepath);
  * @param shader The shader to destroy
  * @returns void
  */
-void shader_destroy(shader_t *shader);
+void shader_destroy(shader_t shader);
 
 #endif // SHADER_H

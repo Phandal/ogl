@@ -43,21 +43,23 @@ int main(void) {
                            // in the current version (Neede for Mac?)
 
   glfwSetErrorCallback(error_callback);
+  log_info("set error callback");
 
   GLFWwindow *window =
       glfwCreateWindow(WIDTH, HEIGHT, "Hello Window", NULL, NULL);
   if (window == NULL) {
     log_error("could not create GLFW window");
     glfwTerminate();
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   log_info("created GLFW window");
   glfwMakeContextCurrent(window);
+  log_info("made glfw context current");
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     log_error("could not initialize GLAD");
     glfwTerminate();
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   log_info("GLAD initialized");
 
@@ -111,7 +113,7 @@ int main(void) {
                GL_STATIC_DRAW);
   log_info("bound element buffer object");
 
-  // Explain how to interpret the vertex data in the vertext buffer object
+  // Explain how to interpret the vertex data in the vertex buffer object
   GLint locationAttribute = 0;
   glVertexAttribPointer(locationAttribute, 3, GL_FLOAT, GL_FALSE,
                         3 * sizeof(float), (void *)0);
@@ -123,12 +125,23 @@ int main(void) {
     formats.
    */
   // Compiling shaders
-  shader_t *vertexShader;
+  char msg[MESSAGE_SIZE] = "unknown";
+  shader_t vertexShader;
   vertexShader = shader_load(GL_VERTEX_SHADER, "shaders/vertex.glsl");
+  if (vertexShader.id == 0 ||
+      !shader_get_compile_status(&vertexShader, msg, MESSAGE_SIZE)) {
+    log_error("could not create vertex shader %s\n", msg);
+    exit(EXIT_FAILURE);
+  }
   log_info("compiled vertex shader");
 
-  shader_t *fragmentShader;
+  shader_t fragmentShader;
   fragmentShader = shader_load(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
+  if (fragmentShader.id == 0 ||
+      !shader_get_compile_status(&fragmentShader, msg, MESSAGE_SIZE)) {
+    log_error("could not create fragment shader %s\n", msg);
+    exit(EXIT_FAILURE);
+  }
   log_info("compiled fragment shader");
 
   // Creating program NOTE: attaching shaders links the outputs of the previous
@@ -136,15 +149,14 @@ int main(void) {
   GLuint program;
   program = glCreateProgram();
   log_info("created program");
-  glAttachShader(program, vertexShader->id);
+  glAttachShader(program, vertexShader.id);
   log_info("attached vertex shader");
-  glAttachShader(program, fragmentShader->id);
+  glAttachShader(program, fragmentShader.id);
   log_info("attached fragment shader");
   glLinkProgram(program);
 
   // Checking for errors when linking
   GLint result;
-  char msg[MESSAGE_SIZE];
   glGetProgramiv(program, GL_LINK_STATUS, &result);
   if (!result) {
     glGetProgramInfoLog(program, MESSAGE_SIZE, NULL, msg);
