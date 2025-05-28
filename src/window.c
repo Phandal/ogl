@@ -28,7 +28,7 @@ void processInput(GLFWwindow *window) {
 int main(void) {
   if (glfwInit() != GL_TRUE) {
     log_error("could not initialize GLFW");
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   log_info("GLFW initialized");
 
@@ -131,6 +131,7 @@ int main(void) {
   if (vertexShader.id == 0 ||
       !shader_get_compile_status(&vertexShader, msg, MESSAGE_SIZE)) {
     log_error("could not create vertex shader %s\n", msg);
+    glfwTerminate();
     exit(EXIT_FAILURE);
   }
   log_info("compiled vertex shader");
@@ -140,6 +141,7 @@ int main(void) {
   if (fragmentShader.id == 0 ||
       !shader_get_compile_status(&fragmentShader, msg, MESSAGE_SIZE)) {
     log_error("could not create fragment shader %s\n", msg);
+    glfwTerminate();
     exit(EXIT_FAILURE);
   }
   log_info("compiled fragment shader");
@@ -161,6 +163,8 @@ int main(void) {
   if (!result) {
     glGetProgramInfoLog(program, MESSAGE_SIZE, NULL, msg);
     log_error("Failed to link: %s", msg);
+    glfwTerminate();
+    exit(EXIT_FAILURE);
   }
   log_info("program linked");
 
