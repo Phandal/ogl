@@ -1,6 +1,5 @@
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -73,10 +72,10 @@ int main(void) {
    */
   // Setting up the Vertices to draw a triangle
   float vertices[] = {
-      0.5f,  0.5f,  0.0f, // Top Right
-      0.5f,  -0.5f, 0.0f, // Bottom Right
-      -0.5f, -0.5f, 0.0f, // Bottom Left
-      -0.5f, 0.5f,  0.0f, // Top Left
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // Top Right
+      0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom Right
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Bottom Left
+      -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f, // Top Left
   };
 
   unsigned int indices[] = {
@@ -115,11 +114,17 @@ int main(void) {
   log_info("bound element buffer object");
 
   // Explain how to interpret the vertex data in the vertex buffer object
-  GLint locationAttribute = 0;
-  glVertexAttribPointer(locationAttribute, 3, GL_FLOAT, GL_FALSE,
-                        3 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(locationAttribute);
-  log_info("enabled location vertex attribute");
+  GLint positionAttribute = 0;
+  GLint colorAttribute = 1;
+  glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
+                        6 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(positionAttribute);
+  log_info("enabled position vertex attribute");
+
+  glVertexAttribPointer(colorAttribute, 3, GL_FLOAT, GL_FALSE,
+                        6 * sizeof(float), (void *)(3 * sizeof(float)));
+  glEnableVertexAttribArray(colorAttribute);
+  log_info("enabled color vertex attribute");
 
   /*
     A Shader is a program that runs on the GPU. It can come in many different
@@ -189,11 +194,7 @@ int main(void) {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    float time = glfwGetTime();
-    float greenValue = (sin(time) / 2.0f) + 0.5f;
-    GLint myColorLocation = glGetUniformLocation(program, "myColor");
     glUseProgram(program);
-    glUniform4f(myColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
