@@ -1,5 +1,6 @@
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -188,7 +189,12 @@ int main(void) {
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    float time = glfwGetTime();
+    float greenValue = (sin(time) / 2.0f) + 0.5f;
+    GLint myColorLocation = glGetUniformLocation(program, "myColor");
     glUseProgram(program);
+    glUniform4f(myColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
