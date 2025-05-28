@@ -1,10 +1,22 @@
 add_executable(window window.c log.c log.h shader.c shader.h)
-
 set_target_properties(window PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-
+target_link_libraries(window glad)
+target_link_libraries(window glfw)
 if (WIRE_FRAME)
   target_compile_definitions(window PUBLIC WIRE_FRAME)
 endif()
 
-target_link_libraries(window glad)
-target_link_libraries(window glfw)
+add_executable(ex_oneone one_one.c log.c log.h shader.c shader.h)
+set_target_properties(ex_oneone PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+target_link_libraries(ex_oneone glad)
+target_link_libraries(ex_oneone glfw)
+
+add_executable(ex_onetwo one_two.c log.c log.h shader.c shader.h)
+set_target_properties(ex_onetwo PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+target_link_libraries(ex_onetwo glad)
+target_link_libraries(ex_onetwo glfw)
+
+add_executable(ex_onethree one_three.c log.c log.h shader.c shader.h)
+set_target_properties(ex_onethree PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+target_link_libraries(ex_onethree glad)
+target_link_libraries(ex_onethree glfw)
