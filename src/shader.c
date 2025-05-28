@@ -22,24 +22,25 @@ shader_t shader_create(GLenum kind, const char *src) {
 shader_t shader_load(GLenum kind, const char *filepath) {
   shader_t shader = {.id = 0};
 
-  FILE *f = fopen(filepath, "r");
-  if (!f) {
+  FILE *file = fopen(filepath, "rb");
+  if (!file) {
     return shader;
   }
 
-  if (fseek(f, 0, SEEK_END) == -1) {
+  if (fseek(file, 0, SEEK_END) == -1) {
     return shader;
   }
 
-  long size = ftell(f);
+  long size = ftell(file);
   if (size == -1) {
     return shader;
   }
 
-  rewind(f);
+  rewind(file);
 
-  char *src = malloc(size + 1);
-  fread(src, size, 1, f);
+  char *src = calloc(1, size + 1);
+
+  fread(src, size, 1, file);
 
   shader = shader_create(kind, src);
   free(src);
