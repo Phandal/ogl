@@ -72,15 +72,13 @@ int main(void) {
    */
   // Setting up the Vertices to draw a triangle
   float vertices[] = {
-      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // Top Right
-      0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom Right
+      0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // Top Right
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
       -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Bottom Left
-      -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f, // Top Left
   };
 
   unsigned int indices[] = {
-      0, 1, 3, // First Triangle
-      1, 2, 3, // Second Triangle
+      0, 1, 2, // First Triangle
   };
 
   /*
@@ -197,7 +195,7 @@ int main(void) {
     glUseProgram(program);
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
