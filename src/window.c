@@ -38,9 +38,11 @@ int main(void) {
       GLFW_OPENGL_PROFILE,
       GLFW_OPENGL_CORE_PROFILE); // Use Core Profile, which gives smaller
                                  // version of opengl functionality
+#ifdef __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,
                  GL_TRUE); // Remove all features that are marked as depracated
                            // in the current version (Neede for Mac?)
+#endif
 
   glfwSetErrorCallback(error_callback);
   log_info("set error callback");

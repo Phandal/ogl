@@ -1,3 +1,8 @@
+/*
+ * Adjust the vertex shader so that the triangle is upside down. solution:
+ * https://learnopengl.com/code_viewer_gh.php?code=src/1.getting_started/3.4.shaders_exercise1/shaders_exercise1.cpp
+ */
+
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
@@ -22,7 +27,10 @@ int main(void) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
   GLFWwindow *window =
       glfwCreateWindow(WIDTH, HEIGHT, "Exercises 2", NULL, NULL);
