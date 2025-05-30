@@ -4,6 +4,7 @@ project(ogltut VERSION 0.1
                DESCRIPTION "My progress through https://learnopengl.com"
                LANGUAGES C)
 
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only")

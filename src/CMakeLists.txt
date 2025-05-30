@@ -20,3 +20,8 @@ add_executable(ex_onethree one_three.c log.c log.h shader.c shader.h)
 set_target_properties(ex_onethree PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 target_link_libraries(ex_onethree glad)
 target_link_libraries(ex_onethree glfw)
+
+add_executable(ex_twoone two_one.c log.c log.h shader.c shader.h)
+set_target_properties(ex_twoone PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+target_link_libraries(ex_twoone glad)
+target_link_libraries(ex_twoone glfw)
