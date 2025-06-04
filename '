@@ -234,7 +234,7 @@ int main(void) {
       glGetUniformLocation(program, "containerTexture");
   GLuint smileySamplerLocation = glGetUniformLocation(program, "smileyTexture");
   glUniform1i(containerSamplerLocation, 0);
-  glUniform1i(smileySamplerLocation, 1);
+  glUniform1i(smileySamplerLocation, 0);
   log_info("set sampler locations manually");
 
   // Cleanup of the shaders after they were used in the program
