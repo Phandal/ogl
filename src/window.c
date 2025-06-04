@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "bmp.h"
 #include "log.h"
 #include "shader.h"
 
@@ -74,13 +75,16 @@ int main(void) {
    */
   // Setting up the Vertices to draw a triangle
   float vertices[] = {
-      0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // Top Right
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Bottom Left
+      /*     Positions           Colors      Texture Coords     */
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top Right
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom Left
+      -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Top Left
   };
 
   unsigned int indices[] = {
-      0, 1, 2, // First Triangle
+      0, 1, 3, // First Triangle
+      3, 1, 2, // Second Triangle
   };
 
   /*
@@ -116,15 +120,45 @@ int main(void) {
   // Explain how to interpret the vertex data in the vertex buffer object
   GLint positionAttribute = 0;
   GLint colorAttribute = 1;
+  GLint textureCoordinateAttribute = 2;
+
   glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
-                        6 * sizeof(float), (void *)0);
+                        8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(positionAttribute);
   log_info("enabled position vertex attribute");
 
   glVertexAttribPointer(colorAttribute, 3, GL_FLOAT, GL_FALSE,
-                        6 * sizeof(float), (void *)(3 * sizeof(float)));
+                        8 * sizeof(float), (void *)(3 * sizeof(float)));
   glEnableVertexAttribArray(colorAttribute);
   log_info("enabled color vertex attribute");
+
+  glVertexAttribPointer(textureCoordinateAttribute, 2, GL_FLOAT, GL_FALSE,
+                        8 * sizeof(float), (void *)(6 * sizeof(float)));
+  glEnableVertexAttribArray(textureCoordinateAttribute);
+  log_info("enabled texture coordinate vertex attribute");
+
+  // Loading an image
+  bmp_image_t *image = bmp_load("images/container.bmp");
+  if (!image) {
+    log_error("could not load image");
+    glfwTerminate();
+    exit(EXIT_FAILURE);
+  }
+  log_info("loaded image");
+
+  // Setting up a texture
+  GLuint texture;
+  glGenTextures(1, &texture);
+  log_info("generate texture");
+
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->info.width, image->info.height,
+               0, GL_BGR, GL_UNSIGNED_BYTE, (uint8_t *)image->pixel);
+  glGenerateMipmap(GL_TEXTURE_2D);
+  log_info("generated texture mipmap");
+
+  bmp_destroy(image);
+  log_info("unloaded image");
 
   /*
     A Shader is a program that runs on the GPU. It can come in many different
@@ -196,8 +230,9 @@ int main(void) {
 
     glUseProgram(program);
 
+    glBindTexture(GL_TEXTURE_2D, texture);
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -212,6 +247,9 @@ int main(void) {
   glDeleteBuffers(1, &EBO);
   log_info("element buffer object deleted");
 
+  glDeleteBuffers(1, &texture);
+  log_info("texture buffer object deleted");
+
   glDeleteProgram(program);
   log_info("program deleted");
 
@@ -221,6 +259,8 @@ int main(void) {
 
   glfwTerminate();
   log_info("GLFW deinitialized");
+
+  log_info("shut down successfully");
 
   return 0;
 }
