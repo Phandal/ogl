@@ -160,15 +160,15 @@ int main(void) {
   log_info("generated textures");
 
   glBindTexture(GL_TEXTURE_2D, textures[0]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, containerImage->info.width,
-               containerImage->info.height, 0, GL_BGR, GL_UNSIGNED_BYTE,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, containerImage->info.width,
+               containerImage->info.height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                (uint8_t *)containerImage->pixel);
   glGenerateMipmap(GL_TEXTURE_2D);
   log_info("generated container texture mipmap");
 
   glBindTexture(GL_TEXTURE_2D, textures[1]);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, smileyImage->info.width,
-               smileyImage->info.height, 0, GL_BGR, GL_UNSIGNED_BYTE,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, smileyImage->info.width,
+               smileyImage->info.height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                (uint8_t *)smileyImage->pixel);
   glGenerateMipmap(GL_TEXTURE_2D);
   log_info("generated smiley texture mipmap");
