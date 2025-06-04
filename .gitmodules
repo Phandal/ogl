@@ -1,3 +1,6 @@
 [submodule "extern/glfw"]
 	path = extern/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "extern/bmp"]
+	path = extern/bmp
+	url = https://github.com/Phandal/bmp

@@ -1,9 +1,9 @@
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
+#include <bmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "bmp.h"
 #include "log.h"
 #include "shader.h"
 
