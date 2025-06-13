@@ -1,6 +1,7 @@
 #include <GLAD/glad.h>
 #include <GLFW/glfw3.h>
 #include <bmp.h>
+#include <cglm/cglm.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,6 +28,17 @@ void processInput(GLFWwindow *window) {
 }
 
 int main(void) {
+
+  vec4 output;
+  vec4 vec = {1.0, 0.0, 0.0, 1.0};
+  vec3 translate = {1.0, 1.0, 0.0};
+  mat4 mat;
+
+  glm_translate_make(mat, translate);
+  glm_mat4_mulv(mat, vec, output);
+  printf("%f, %f, %f\n", output[0], output[1], output[2]);
+  exit(0);
+
   if (glfwInit() != GL_TRUE) {
     log_error("could not initialize GLFW");
     exit(EXIT_FAILURE);

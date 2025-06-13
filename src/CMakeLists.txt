@@ -3,6 +3,7 @@ set_target_properties(window PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY
 target_link_libraries(window glad)
 target_link_libraries(window glfw)
 target_link_libraries(window bmp)
+target_include_directories(window PUBLIC "${CMAKE_SOURCE_DIR}/extern/cglm/include")
 if (WIRE_FRAME)
   target_compile_definitions(window PUBLIC WIRE_FRAME)
 endif()
